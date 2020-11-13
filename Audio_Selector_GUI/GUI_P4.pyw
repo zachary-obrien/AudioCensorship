@@ -5,16 +5,117 @@ import tkinter as Tkinter
 import tkinter.filedialog
 import __main__
 
+try:
+    from pip import main as pipmain
+except ImportError:
+    from pip._internal import main as pipmain
+
+try:
+   from playsound import playsound
+except:
+   pipmain(['install', 'playsound'])
+   from playsound import playsound
+
 tkFileDialog = tkinter.filedialog
 
 #Abbreviate
 m = __main__
+
+aFile = ""
 
 # Create and hide the root window
 root = Tkinter.Tk()
 root.wm_title("AUDIO SELECTOR")
 root.withdraw()
 
+def G1_Button_Enter(e=''):
+           
+   m.canvas.tag_raise('G1_ACTIVE')
+   m.canvas.tag_raise('G1_AUDIO')
+   m.canvas.itemconfig('G1_AUDIO', fill='#00ff00')
+
+def G1_Button_Leave(e=''):
+   m.canvas.tag_lower('G1_ACTIVE')
+
+def G1_Audio_Enter(e=''):
+           
+   m.canvas.tag_raise('G1_ACTIVE')
+   m.canvas.tag_raise('G1_AUDIO')
+   m.canvas.itemconfig('G1_AUDIO', fill='#00ff00')
+
+def G1_Audio_Leave(e=''):
+   m.canvas.itemconfig('G1_AUDIO', fill='white')       
+
+def G1_Button_Pess(e=''):
+                
+   # Where Am I File & Path
+   file_path = sys._getframe().f_code.co_filename
+
+   # This Directory
+   Dir = os.path.dirname(file_path)
+
+   #Abbreviate
+   Select_File = tkFileDialog.askopenfilename
+
+   T = "Select File Path to Audio File"
+   F = (("Audio files","*.MP3 *.WAV"),("all files","*.*"))
+   m.aFile = Select_File(initialdir = Dir, title = T, filetypes = F)
+
+   m.canvas.tag_raise('P1_AUDIO')
+   m.canvas.itemconfig('P1_AUDIO', fill='white')
+   m.canvas.update()
+   print ('.MP3' not in m.aFile.upper() )
+   print ('.WAV' not in m.aFile.upper())
+   
+def P1_Button_Enter(e=''):
+
+   if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
+      m.canvas.itemconfig('P1_AUDIO', fill='#999999')
+      canvas.tag_lower('P1_ACTIVE')
+      return
+       
+   m.canvas.tag_raise('P1_ACTIVE')
+   m.canvas.tag_raise('P1_AUDIO')
+   m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
+
+def P1_Button_Leave(e=''):
+   m.canvas.tag_lower('P1_ACTIVE')
+
+def P1_Audio_Enter(e=''):
+
+   if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
+      m.canvas.itemconfig('P1_AUDIO', fill='#999999')
+      canvas.tag_lower('P1_ACTIVE')
+      return
+   
+   m.canvas.tag_raise('P1_ACTIVE')
+   m.canvas.tag_raise('P1_AUDIO')
+   m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
+
+def P1_Audio_Leave(e=''):
+   m.canvas.itemconfig('P1_AUDIO', fill='white')       
+
+def P1_Button_Pess(e=''):
+   
+   if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
+      m.canvas.itemconfig('P1_AUDIO', fill='#999999')
+      canvas.tag_lower('P1_ACTIVE')
+      return
+   
+   playsound(m.aFile)
+
+def Check_Audio():
+   
+   try:
+      
+      if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
+         m.canvas.itemconfig('P1_AUDIO', fill='#999999')
+         canvas.tag_lower('P1_ACTIVE')
+         
+   except:
+      pass
+
+   root.after(250, Check_Audio)
 
 def gui_interface():
 
@@ -39,80 +140,97 @@ def gui_interface():
 
         m.canvas = canvas
 
-        canvas.update()
+        
 
         window.wm_attributes('-alpha', .93)
 
         m.window = window
 
+        #Abbreviate
+        add_image = m.canvas.create_image
+        PhotoImage = Tkinter.PhotoImage
+        add_text = canvas.create_text
+
         # Create Background_from_data
-        canvas.Background_from_data = Tkinter.PhotoImage(data=Background)
-        canvas.Background_Image = m.canvas.create_image(375,300, image = canvas.Background_from_data)
+        canvas.Background_from_data = PhotoImage(data=Background)
+        add_image(375,300, image = canvas.Background_from_data)
         
-        # Create image_from_data
-        canvas.button_active = Tkinter.PhotoImage(data=Get_Audio_Button_Active)
-        canvas.active_button = m.canvas.create_image(700,570, image = canvas.button_active, tags=['ACTIVE','ACTIVE2'])
+        # Create GET AUDIO BUTTON
+        #====================================================================
 
-        canvas.tag_lower('ACTIVE')
+        # Create _Button_Active
+        canvas.get_audio_button_active = PhotoImage(data=_Button_Active)
+        image = add_image(700,535, image = canvas.get_audio_button_active)
+        canvas.itemconfig(image,tags=['G1_ACTIVE','G2_ACTIVE'])
+        canvas.tag_lower('G1_ACTIVE')
+
+        # Create _Button_Inactive
+        canvas.get_audio_button_inactive = PhotoImage(data=_Button_Inactive)
+        image = add_image(700,536, image = canvas.get_audio_button_inactive)
+        canvas.itemconfig(image,tags=['G1_INACTIVE','G2_INACTIVE'])
+        canvas.tag_raise('G1_INACTIVE')
         
-        canvas.button_inactive = Tkinter.PhotoImage(data=Get_Audio_Button_Inactive)
-        canvas.inactive_button = m.canvas.create_image(700,571, image = canvas.button_inactive, tags=['INACTIVE','INACTIVE2'])
+        # Create Get_Audio_Text
+        text = add_text((700, 535), font = 'arial 13 bold', text='GET AUDIO')
+        canvas.itemconfig(text, fill='white',  tags=['G1_AUDIO','G2_AUDIO'])
 
-        canvas.tag_raise('INACTIVE')
+        canvas.tag_bind('G1_INACTIVE',"<Enter>", G1_Button_Enter)
+        canvas.tag_bind('G1_ACTIVE',"<Leave>", G1_Button_Leave)
+
+        canvas.tag_bind('G1_AUDIO',"<Enter>", G1_Audio_Enter)
+        canvas.tag_bind('G1_AUDIO',"<Leave>", G1_Audio_Leave)
+
+        canvas.tag_bind('G2_ACTIVE',"<Button-1>", G1_Button_Pess)
+        canvas.tag_bind('G2_AUDIO',"<Button-1>", G1_Button_Pess)
+
+        #====================================================================
+
+        # Create GET PLAY BUTTON
+        #====================================================================
+
+        # Create _Button_Active
+        canvas.play_audio_button_active = PhotoImage(data=_Button_Active)
+        image = add_image(700,570, image = canvas.play_audio_button_active)
+        canvas.itemconfig(image,tags=['P1_ACTIVE','P2_ACTIVE'])
+        canvas.tag_lower('P1_ACTIVE')
+
+        # Create _Button_Inactive
+        canvas.play_audio_button_inactive = PhotoImage(data=_Button_Inactive)
+        image = add_image(700,571, image = canvas.play_audio_button_inactive)
+        canvas.itemconfig(image,tags=['P1_INACTIVE','P2_INACTIVE'])
+        canvas.tag_raise('P1_INACTIVE')
         
-        canvas.create_text((700, 570), font = 'arial 13 bold', text='GET AUDIO', fill='white', tags=['AUDIO','AUDIO2'])
+        # Create Play_Audio_Text
+        text = add_text((700, 570), font = 'arial 13 bold', text='PLAY AUDIO')
+        canvas.itemconfig(text, fill='white',  tags=['P1_AUDIO','P2_AUDIO'])
 
-        def Button_Active(e=''):
-           
-           canvas.tag_raise('ACTIVE')
-           canvas.tag_raise('AUDIO')
-           canvas.itemconfig('AUDIO', fill='#00ff00')
+        canvas.tag_bind('P1_INACTIVE',"<Enter>", P1_Button_Enter)
+        canvas.tag_bind('P1_ACTIVE',"<Leave>", P1_Button_Leave)
 
-        def Audio_Active(e=''):
-           
-           canvas.tag_raise('ACTIVE')
-           canvas.tag_raise('AUDIO')
-           canvas.itemconfig('AUDIO', fill='#00ff00')
+        canvas.tag_bind('P1_AUDIO',"<Enter>", P1_Audio_Enter)
+        canvas.tag_bind('P1_AUDIO',"<Leave>", P1_Audio_Leave)
 
-        def Button_Pess(e=''):
-                
-           # Where Am I File & Path
-           file_path = sys._getframe().f_code.co_filename
+        canvas.tag_bind('P2_ACTIVE',"<Button-1>", P1_Button_Pess)
+        canvas.tag_bind('P2_AUDIO',"<Button-1>", P1_Button_Pess)
 
-           # This Directory
-           Dir = os.path.dirname(file_path)
-
-           #Abbreviate
-           Select_File = tkFileDialog.askopenfilename
-
-           T = "Select File Path to Audio File"
-           F = (("Audio files","*.MP3 *.WAV"),("all files","*.*"))
-           cFile = Select_File(initialdir = Dir, title = T, filetypes = F)
-           
-
-        canvas.tag_bind('INACTIVE',"<Enter>", Button_Active)
-        canvas.tag_bind('ACTIVE',"<Leave>", lambda e: canvas.tag_lower('ACTIVE'))
-
-        canvas.tag_bind('AUDIO',"<Enter>", Audio_Active)
-        canvas.tag_bind('AUDIO',"<Leave>", lambda e: canvas.itemconfig('AUDIO', fill='white'))
-
-        canvas.tag_bind('ACTIVE2',"<Button-1>", Button_Pess)
-        canvas.tag_bind('AUDIO2',"<Button-1>", Button_Pess)
+        #====================================================================         
         
         canvas.update()
         window.update()
+
+        Check_Audio()
         
         return window
         
 #----------------------------------------------------------------
 
-Get_Audio_Button_Inactive="""
+_Button_Inactive="""
 R0lGODlhbgAjAIABAAAAAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAABuACMA
 AAJCjI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJ
 jUqn1Kr1is1qt5oCADs=
 """
 
-Get_Audio_Button_Active="""
+_Button_Active="""
 R0lGODlhbgAjAMZIAAsLCwwMDA0NDQ8PDxERERISEhMTExUVFRYWFhgYGBoaGhwcHB0dHR4eHiAg
 ICEhIScnJygoKCkpKSwsLC0tLS8vLzAwMDExMTIyMjMzMzQ0NDU1NTY2Njc3Nzg4ODk5OTo6Ojs7
 Ozw8PD09PT4+Pj8/P0BAQEFBQUJCQkNDQ0REREVFRUZGRkdHR0hISElJSUpKSktLS0xMTE1NTU5O
