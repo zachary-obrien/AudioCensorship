@@ -62,10 +62,8 @@ def G1_Button_Pess(e=''):
    m.aFile = Select_File(initialdir = Dir, title = T, filetypes = F)
 
    m.canvas.tag_raise('P1_AUDIO')
-   m.canvas.itemconfig('P1_AUDIO', fill='white')
+   m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
    m.canvas.update()
-   print ('.MP3' not in m.aFile.upper() )
-   print ('.WAV' not in m.aFile.upper())
    
 def P1_Button_Enter(e=''):
 
