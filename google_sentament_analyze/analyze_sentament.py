@@ -40,7 +40,8 @@ def analyze(content):
     #annotations = client.analyze_entity_sentiment(request = {'document': document, 'encoding_type': encoding_type})
     #response = client.analyze_syntax(request = {'document': document, 'encoding_type': encoding_type})
     # Print the results
-    print(annotations)
+    #print(annotations)
+    return annotations
     #print(response)
     #print_result(annotations)
 
