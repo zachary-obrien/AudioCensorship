@@ -26,8 +26,8 @@ def print_sentences(response):
 def print_word_offsets(alternative):
     global FULL_TRANSCRIPT, TRANSCRIPT, TIMES, sentence
     for word in alternative.words:
-        start_s = word.start_time.total_seconds()
-        end_s = word.end_time.total_seconds()
+        start_s = word.start_time.total_seconds() * 1000
+        end_s = word.end_time.total_seconds() * 1000
         time = (start_s,end_s)
 
         punctuations = '''.?~!,-'''
@@ -70,7 +70,3 @@ def transcribe_file(speech_file):
 
     print_sentences(response)
     return FULL_TRANSCRIPT, TRANSCRIPT, TIMES
-
-
-
-transcribe_file(r"C:\Users\rmcm6\OneDrive\Desktop\College Stuff\SpeechToText5.wav")
