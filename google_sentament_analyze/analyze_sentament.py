@@ -4,7 +4,6 @@ import argparse
 
 from google.cloud import language_v1
 from google.oauth2 import service_account
-
 # [END language_sentiment_tutorial_imports]
 
 
@@ -32,7 +31,7 @@ def print_result(annotations):
 # [START language_sentiment_tutorial_analyze_sentiment]
 def analyze(content):
     """Run a sentiment analysis request on text within a passed filename."""
-    credentials = service_account.Credentials.from_service_account_file("Test Project-c8894ff3f001.json")
+    credentials = service_account.Credentials.from_service_account_file("google_sentament_analyze/Test_Project-c8894ff3f001.json")
     client = language_v1.LanguageServiceClient(credentials=credentials)
     encoding_type = language_v1.EncodingType.UTF8
 
