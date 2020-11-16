@@ -4,16 +4,12 @@ import time
 import tkinter as Tkinter
 import tkinter.filedialog
 import __main__
-
-try:
-    from pip import main as pipmain
-except ImportError:
-    from pip._internal import main as pipmain
+import multiprocessing
 
 try:
    from playsound import playsound
 except:
-   pipmain(['install', 'playsound'])
+   os.system('pip install playsound' + " & timeout 10")
    from playsound import playsound
 
 tkFileDialog = tkinter.filedialog
@@ -28,8 +24,29 @@ root = Tkinter.Tk()
 root.wm_title("AUDIO SELECTOR")
 root.withdraw()
 
+def Playing_Sound():
+    
+   m.canvas.itemconfig('P1_AUDIO', text='STOP AUDIO', fill='#ff0000')
+   m.canvas.tag_raise('P1_ACTIVE')
+   m.canvas.tag_raise('P1_AUDIO')
+   m.canvas.itemconfig('G1_AUDIO', fill='#999999')
+   m.canvas.tag_lower('G1_ACTIVE')
+
+def Stop_Playing_Sound():
+    
+   m.canvas.itemconfig('P1_AUDIO', text='PLAY AUDIO', fill='#00ff00')
+   m.canvas.tag_raise('P1_AUDIO')
+   m.canvas.itemconfig('G1_AUDIO', fill='white')
+   if 'playing_sound' in m.__dict__:
+      m.playing_sound.terminate()
+      del m.__dict__['playing_sound']
+
 def G1_Button_Enter(e=''):
-           
+   
+   if 'playing_sound' in m.__dict__:
+      Playing_Sound()
+      return
+   
    m.canvas.tag_raise('G1_ACTIVE')
    m.canvas.tag_raise('G1_AUDIO')
    m.canvas.itemconfig('G1_AUDIO', fill='#00ff00')
@@ -38,6 +55,10 @@ def G1_Button_Leave(e=''):
    m.canvas.tag_lower('G1_ACTIVE')
 
 def G1_Audio_Enter(e=''):
+   
+   if 'playing_sound' in m.__dict__:
+      Playing_Sound()
+      return
            
    m.canvas.tag_raise('G1_ACTIVE')
    m.canvas.tag_raise('G1_AUDIO')
@@ -47,7 +68,10 @@ def G1_Audio_Leave(e=''):
    m.canvas.itemconfig('G1_AUDIO', fill='white')       
 
 def G1_Button_Pess(e=''):
-                
+
+   if 'playing_sound' in m.__dict__:
+      return
+    
    # Where Am I File & Path
    file_path = sys._getframe().f_code.co_filename
 
@@ -71,10 +95,15 @@ def P1_Button_Enter(e=''):
       m.canvas.itemconfig('P1_AUDIO', fill='#999999')
       canvas.tag_lower('P1_ACTIVE')
       return
-       
-   m.canvas.tag_raise('P1_ACTIVE')
-   m.canvas.tag_raise('P1_AUDIO')
-   m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
+   
+   if 'playing_sound' in m.__dict__:
+      Playing_Sound()
+      return
+
+   else:
+      m.canvas.tag_raise('P1_ACTIVE')
+      m.canvas.tag_raise('P1_AUDIO')
+      m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
 
 def P1_Button_Leave(e=''):
    m.canvas.tag_lower('P1_ACTIVE')
@@ -83,36 +112,55 @@ def P1_Audio_Enter(e=''):
 
    if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
       m.canvas.itemconfig('P1_AUDIO', fill='#999999')
-      canvas.tag_lower('P1_ACTIVE')
+      m.canvas.tag_lower('P1_ACTIVE')
       return
    
-   m.canvas.tag_raise('P1_ACTIVE')
-   m.canvas.tag_raise('P1_AUDIO')
-   m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
+   if 'playing_sound' in m.__dict__:
+      Playing_Sound()
+      return
+
+   else:
+      m.canvas.tag_raise('P1_ACTIVE')
+      m.canvas.tag_raise('P1_AUDIO')
+      m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
 
 def P1_Audio_Leave(e=''):
-   m.canvas.itemconfig('P1_AUDIO', fill='white')       
+   if 'playing_sound' in m.__dict__:
+      m.canvas.itemconfig('P1_AUDIO', fill='#ff0000') 
+   else:
+      m.canvas.itemconfig('P1_AUDIO', fill='white')       
 
 def P1_Button_Pess(e=''):
    
    if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
       m.canvas.itemconfig('P1_AUDIO', fill='#999999')
-      canvas.tag_lower('P1_ACTIVE')
+      m.canvas.tag_lower('P1_ACTIVE')
       return
-   
-   playsound(m.aFile)
+
+   if 'playing_sound' not in m.__dict__:
+
+      m.playing_sound = multiprocessing.Process(target=playsound, args=(m.aFile,))
+      m.playing_sound.start()
+
+   else:
+      
+      Stop_Playing_Sound()
 
 def Check_Audio():
-   
-   try:
       
-      if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
-         m.canvas.itemconfig('P1_AUDIO', fill='#999999')
-         canvas.tag_lower('P1_ACTIVE')
+   if '.MP3' not in m.aFile.upper() and '.WAV' not in m.aFile.upper():
+      m.canvas.itemconfig('P1_AUDIO', fill='#999999')
+      canvas.tag_lower('P1_ACTIVE')
          
-   except:
-      pass
+   if 'playing_sound' in m.__dict__:
+      
+      m.canvas.itemconfig('G1_AUDIO', fill='#999999')
+      canvas.tag_lower('G1_ACTIVE')
+      m.canvas.itemconfig('P1_AUDIO', text='STOP AUDIO', fill='#ff0000')
 
+      if not playing_sound.is_alive():
+         Stop_Playing_Sound()
+      
    root.after(250, Check_Audio)
 
 def gui_interface():
