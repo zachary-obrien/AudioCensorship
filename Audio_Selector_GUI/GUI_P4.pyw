@@ -7,9 +7,14 @@ import __main__
 import multiprocessing
 
 try:
+    from pip import main as pipmain
+except ImportError:
+    from pip._internal import main as pipmain
+
+try:
    from playsound import playsound
 except:
-   os.system('pip install playsound' + " & timeout 10")
+   pipmain(['install', 'playsound'])
    from playsound import playsound
 
 tkFileDialog = tkinter.filedialog
@@ -163,6 +168,13 @@ def Check_Audio():
       
    root.after(250, Check_Audio)
 
+def Add_Entry(e=''):
+   m.ListBox.insert(Tkinter.END, m.EntryBox.get())
+   m.EntryBox.delete(0, Tkinter.END)
+   
+def Remove_Entry(e=''):
+   m.ListBox.delete(m.ListBox.curselection())
+   
 def gui_interface():
 
         window = Tkinter.Toplevel()
@@ -186,8 +198,6 @@ def gui_interface():
 
         m.canvas = canvas
 
-        
-
         window.wm_attributes('-alpha', .93)
 
         m.window = window
@@ -199,25 +209,25 @@ def gui_interface():
 
         # Create Background_from_data
         canvas.Background_from_data = PhotoImage(data=Background)
-        add_image(375,300, image = canvas.Background_from_data)
+        add_image(375,230, image = canvas.Background_from_data)
         
         # Create GET AUDIO BUTTON
         #====================================================================
 
         # Create _Button_Active
         canvas.get_audio_button_active = PhotoImage(data=_Button_Active)
-        image = add_image(700,535, image = canvas.get_audio_button_active)
+        image = add_image(700,525, image = canvas.get_audio_button_active)
         canvas.itemconfig(image,tags=['G1_ACTIVE','G2_ACTIVE'])
         canvas.tag_lower('G1_ACTIVE')
 
         # Create _Button_Inactive
         canvas.get_audio_button_inactive = PhotoImage(data=_Button_Inactive)
-        image = add_image(700,536, image = canvas.get_audio_button_inactive)
+        image = add_image(700,526, image = canvas.get_audio_button_inactive)
         canvas.itemconfig(image,tags=['G1_INACTIVE','G2_INACTIVE'])
         canvas.tag_raise('G1_INACTIVE')
         
         # Create Get_Audio_Text
-        text = add_text((700, 535), font = 'arial 13 bold', text='GET AUDIO')
+        text = add_text((700, 525), font = 'arial 13 bold', text='GET AUDIO')
         canvas.itemconfig(text, fill='white',  tags=['G1_AUDIO','G2_AUDIO'])
 
         canvas.tag_bind('G1_INACTIVE',"<Enter>", G1_Button_Enter)
@@ -230,24 +240,23 @@ def gui_interface():
         canvas.tag_bind('G2_AUDIO',"<Button-1>", G1_Button_Pess)
 
         #====================================================================
-
         # Create GET PLAY BUTTON
         #====================================================================
 
         # Create _Button_Active
         canvas.play_audio_button_active = PhotoImage(data=_Button_Active)
-        image = add_image(700,570, image = canvas.play_audio_button_active)
+        image = add_image(700,560, image = canvas.play_audio_button_active)
         canvas.itemconfig(image,tags=['P1_ACTIVE','P2_ACTIVE'])
         canvas.tag_lower('P1_ACTIVE')
 
         # Create _Button_Inactive
         canvas.play_audio_button_inactive = PhotoImage(data=_Button_Inactive)
-        image = add_image(700,571, image = canvas.play_audio_button_inactive)
+        image = add_image(700,561, image = canvas.play_audio_button_inactive)
         canvas.itemconfig(image,tags=['P1_INACTIVE','P2_INACTIVE'])
         canvas.tag_raise('P1_INACTIVE')
         
         # Create Play_Audio_Text
-        text = add_text((700, 570), font = 'arial 13 bold', text='PLAY AUDIO')
+        text = add_text((700, 560), font = 'arial 13 bold', text='PLAY AUDIO')
         canvas.itemconfig(text, fill='white',  tags=['P1_AUDIO','P2_AUDIO'])
 
         canvas.tag_bind('P1_INACTIVE',"<Enter>", P1_Button_Enter)
@@ -259,7 +268,41 @@ def gui_interface():
         canvas.tag_bind('P2_ACTIVE',"<Button-1>", P1_Button_Pess)
         canvas.tag_bind('P2_AUDIO',"<Button-1>", P1_Button_Pess)
 
-        #====================================================================         
+        #====================================================================
+        # Create ListBox
+        #====================================================================
+
+        m.ListBox = tkinter.Listbox(canvas, width = 24, height=5)
+        m.ListBox.place(x=470,y=485)
+
+        items = ['Word 1', 'Word 2', 'Word 3', 'Word 4']
+
+        for item in items:
+            m.ListBox.insert(Tkinter.END, item)
+     
+        #====================================================================
+        # Create EntryBox
+        #====================================================================
+
+        m.EntryBox = tkinter.Entry(canvas, width = 24)
+        m.EntryBox.place(x=470,y=465)
+
+        #====================================================================
+        # Create Add Button
+        #====================================================================
+
+        m.Add = tkinter.Button(canvas, text="Add Value", command=Add_Entry)
+        m.Add['width'] = 20
+        m.Add.place(x=470,y=438)
+        
+        #====================================================================
+        # Create Remove Button
+        #====================================================================
+
+        m.Remove = tkinter.Button(canvas, text="Remove Value", command=Remove_Entry)
+        m.Remove['width'] = 20
+        m.Remove.place(x=470,y=570)
+
         
         canvas.update()
         window.update()
