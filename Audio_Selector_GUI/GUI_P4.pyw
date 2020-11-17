@@ -149,7 +149,7 @@ def P1_Button_Pess(e=''):
 
    else:
       
-      Stop_Playing_Sound()
+      Stop_Playing_Sound()  
 
 def Check_Audio():
       
@@ -166,14 +166,33 @@ def Check_Audio():
       if not playing_sound.is_alive():
          Stop_Playing_Sound()
       
+   if not m.EntryBox.get():
+      m.canvas.itemconfig('A1_VALUE', fill='#999999')
+   else:
+      m.canvas.itemconfig('A1_VALUE', fill='#00ff00')
+
+   if not m.ListBox.curselection():
+      m.canvas.itemconfig('R1_VALUE', fill='#999999')
+   else:
+      m.canvas.itemconfig('R1_VALUE', fill='#00ff00')
+      m.canvas.tag_raise('R1_VALUE')
+      
    root.after(250, Check_Audio)
 
 def Add_Entry(e=''):
    m.ListBox.insert(Tkinter.END, m.EntryBox.get())
    m.EntryBox.delete(0, Tkinter.END)
+   m.canvas.itemconfig('A1_VALUE', fill='#999999')
+   m.canvas.tag_lower('A1_ACTIVE')
    
 def Remove_Entry(e=''):
+
+   if not m.ListBox.curselection():
+       return
+    
    m.ListBox.delete(m.ListBox.curselection())
+   m.canvas.itemconfig('R1_VALUE', fill='#999999')
+   m.canvas.tag_lower('R1_ACTIVE')
    
 def gui_interface():
 
@@ -251,7 +270,7 @@ def gui_interface():
 
         # Create _Button_Inactive
         canvas.play_audio_button_inactive = PhotoImage(data=_Button_Inactive)
-        image = add_image(700,561, image = canvas.play_audio_button_inactive)
+        image = add_image(700,560, image = canvas.play_audio_button_inactive)
         canvas.itemconfig(image,tags=['P1_INACTIVE','P2_INACTIVE'])
         canvas.tag_raise('P1_INACTIVE')
         
@@ -272,8 +291,10 @@ def gui_interface():
         # Create ListBox
         #====================================================================
 
-        m.ListBox = tkinter.Listbox(canvas, width = 24, height=5)
-        m.ListBox.place(x=470,y=485)
+        m.ListBox = tkinter.Listbox(canvas, width = 24, height=5, bg="#394144")
+        m.ListBox['bg'] = "#000005" # "black" # "#394144"
+        m.ListBox['fg'] = "white"
+        m.ListBox.place(x=455,y=480)
 
         items = ['Word 1', 'Word 2', 'Word 3', 'Word 4']
 
@@ -285,24 +306,41 @@ def gui_interface():
         #====================================================================
 
         m.EntryBox = tkinter.Entry(canvas, width = 24)
-        m.EntryBox.place(x=470,y=465)
+        m.EntryBox['bg'] = "#000005" # "black" # "#394144"
+        m.EntryBox['fg'] = "white"
+        m.EntryBox.place(x=455,y=455)
 
         #====================================================================
         # Create Add Button
         #====================================================================
 
-        m.Add = tkinter.Button(canvas, text="Add Value", command=Add_Entry)
-        m.Add['width'] = 20
-        m.Add.place(x=470,y=438)
+        # Create _Button_Inactive
+        canvas.add_value_button_inactive = PhotoImage(data=_Button_Inactive)
+        image = add_image(530,445, image = canvas.add_value_button_inactive)
+        canvas.itemconfig(image,tags=['A1_INACTIVE','A2_INACTIVE'])
+        
+        # Create Add_Text
+        text = add_text((530, 445), font = 'arial 13 bold', text='ADD VALUE')
+        canvas.itemconfig(text, fill='white',  tags=['A1_VALUE','A2_VALUE'])
+
+        canvas.tag_bind('A2_INACTIVE',"<Button-1>", Add_Entry)
+        canvas.tag_bind('A2_VALUE',"<Button-1>", Add_Entry)
         
         #====================================================================
         # Create Remove Button
         #====================================================================
 
-        m.Remove = tkinter.Button(canvas, text="Remove Value", command=Remove_Entry)
-        m.Remove['width'] = 20
-        m.Remove.place(x=470,y=570)
+        # Create _Button_Inactive
+        canvas.add_value_button_inactive = PhotoImage(data=_Button_Inactive)
+        image = add_image(530,575, image = canvas.add_value_button_inactive)
+        canvas.itemconfig(image,tags=['R1_INACTIVE','R2_INACTIVE'])
+        
+        # Create Add_Text
+        text = add_text((530, 575), font = 'arial 13 bold', text='REMOVE')
+        canvas.itemconfig(text, fill='white',  tags=['R1_VALUE','R2_VALUE'])
 
+        canvas.tag_bind('R2_INACTIVE',"<Button-1>", Remove_Entry)
+        canvas.tag_bind('R2_VALUE',"<Button-1>", Remove_Entry)
         
         canvas.update()
         window.update()
