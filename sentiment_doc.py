@@ -56,10 +56,10 @@ class sentiment_doc():
 
 
 my_sentiment_doc = sentiment_doc()
-full_string, transcript, word_dict = SpeechToText.transcribe_file(r"C:\Users\rmcm6\OneDrive\Desktop\College Stuff\SpeechToText1.wav")
+full_string, transcript, word_dict = SpeechToText.transcribe_file("SpeechToText7.wav")
 print(full_string)
 print(transcript)
 print(word_dict)
-my_sentiment_doc.populate_doc(audio_file="SpeechToText5.wav", input_doc_string=full_string, sentences=transcript, words=word_dict)
+my_sentiment_doc.populate_doc(audio_file="SpeechToText7.wav", input_doc_string=full_string, sentences=transcript, words=word_dict)
 times_to_delete = my_sentiment_doc.analyze_sentiment()
 my_sentiment_doc.remove_audio(times_to_delete)

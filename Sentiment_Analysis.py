@@ -1,4 +1,4 @@
-#    client = language_v1.LanguageServiceClient(credentials="Test Project-c8894ff3f001.json")
+#    client = language_v1.LanguageServiceClient(credentials="Test_Project-c8894ff3f001.json")
 import argparse
 
 from google.cloud import language_v1
@@ -30,7 +30,7 @@ def print_result(annotations):
 # [START language_sentiment_tutorial_analyze_sentiment]
 def analyze(content):
     """Run a sentiment analysis request on text within a passed filename."""
-    credentials = service_account.Credentials.from_service_account_file("private_key.json")
+    credentials = service_account.Credentials.from_service_account_file("Test_Project-c8894ff3f001.json")
     client = language_v1.LanguageServiceClient(credentials=credentials)
     encoding_type = language_v1.EncodingType.UTF8
 

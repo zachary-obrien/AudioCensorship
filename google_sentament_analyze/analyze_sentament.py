@@ -1,5 +1,5 @@
 
-#    client = language_v1.LanguageServiceClient(credentials="Test Project-c8894ff3f001.json")
+#    client = language_v1.LanguageServiceClient(credentials="Test_Project-c8894ff3f001.json")
 import argparse
 
 from google.cloud import language_v1

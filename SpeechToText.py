@@ -2,7 +2,7 @@ from google.cloud import speech_v1 as speech
 import os
 import io
 
-credential_path = r"C:\Users\rmcm6\OneDrive\Desktop\College Stuff\My First Project-93317e258743.json"
+credential_path = "Test_Project-c8894ff3f001.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 TRANSCRIPT = []
