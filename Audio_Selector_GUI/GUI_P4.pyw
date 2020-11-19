@@ -7,14 +7,9 @@ import __main__
 import multiprocessing
 
 try:
-    from pip import main as pipmain
-except ImportError:
-    from pip._internal import main as pipmain
-
-try:
    from playsound import playsound
 except:
-   pipmain(['install', 'playsound'])
+   os.system('pip install playsound' + " & timeout 10")
    from playsound import playsound
 
 tkFileDialog = tkinter.filedialog
