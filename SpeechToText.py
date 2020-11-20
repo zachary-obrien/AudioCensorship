@@ -2,7 +2,7 @@ from google.cloud import speech_v1 as speech
 import os
 import io
 
-credential_path = "Test_Project-c8894ff3f001.json"
+credential_path = r"C:\Users\rmcm6\OneDrive\Desktop\College Stuff\My First Project-93317e258743.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 TRANSCRIPT = []
@@ -13,13 +13,12 @@ TIMES = dict()
 
 def print_sentences(response):
     global TIMES, sentence, TRANSCRIPT
+    TIMES[sentence] = {}
     for result in response.results:
         best_alternative = result.alternatives[0]
         transcript = best_alternative.transcript
         confidence = best_alternative.confidence
-        TIMES[sentence] = {}
         TRANSCRIPT.append(transcript)
-        sentence = sentence + 1
         print_word_offsets(best_alternative)
 
 
@@ -31,14 +30,18 @@ def print_word_offsets(alternative):
         time = (start_s,end_s)
 
         punctuations = '''.?~!,-'''
+        puncts = '''.?!'''
         new_word = ""
         for char in word.word:
             if char not in punctuations:
                 new_word = new_word + char
 
-        #if new_word not in TIMES[sentence - 1]:
-            #TIMES[sentence - 1][new_word] = list()
-        TIMES[sentence - 1][new_word] = time
+        TIMES[sentence][new_word] = time
+
+        for char in word.word:
+            if char in puncts:
+                sentence = sentence + 1
+                TIMES[sentence] = {}
 
         if len(FULL_TRANSCRIPT) < 1:
             FULL_TRANSCRIPT = word.word
@@ -69,4 +72,6 @@ def transcribe_file(speech_file):
     response = client.recognize(config=config, audio=audio)
 
     print_sentences(response)
+    i = len(TIMES) -1
+    del TIMES[i]
     return FULL_TRANSCRIPT, TRANSCRIPT, TIMES
