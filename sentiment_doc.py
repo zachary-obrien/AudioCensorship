@@ -1,6 +1,7 @@
 import Sentiment_Analysis
 import SpeechToText
 import json
+import censorship
 
 
 class sentiment_doc():
@@ -32,7 +33,7 @@ class sentiment_doc():
                 min_time = lower_time
             if max_time == 0 or max_time < upper_time:
                 max_time = upper_time
-        return (min_time, max_time)
+        return (int(min_time), int(max_time))
 
     def analyze_sentiment(self):
         doc_data = Sentiment_Analysis.analyze(self.doc_string)
@@ -56,10 +57,15 @@ class sentiment_doc():
 
 
 my_sentiment_doc = sentiment_doc()
-full_string, transcript, word_dict = SpeechToText.transcribe_file("SpeechToText7.wav")
+audio_file = "SpeechToText8.wav"
+full_string, transcript, word_dict = SpeechToText.transcribe_file(audio_file)
+print("full_string")
 print(full_string)
+print("transcript")
 print(transcript)
+print("word_dict")
 print(word_dict)
-my_sentiment_doc.populate_doc(audio_file="SpeechToText7.wav", input_doc_string=full_string, sentences=transcript, words=word_dict)
+my_sentiment_doc.populate_doc(audio_file=audio_file, input_doc_string=full_string, sentences=transcript, words=word_dict)
 times_to_delete = my_sentiment_doc.analyze_sentiment()
-my_sentiment_doc.remove_audio(times_to_delete)
+censorship.censor(audio_file, times_to_delete)
+#my_sentiment_doc.remove_audio(times_to_delete)
