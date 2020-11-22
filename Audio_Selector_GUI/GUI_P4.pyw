@@ -5917,9 +5917,14 @@ from shutil import copyfile
 
 def fake_censorship(input_wav):
 
-   copyfile(input_wav, AudioCensorship + '\\' + "input")
+   # input_wav must be the full file path.
+   input_wav_file = os.path.basename(input_wav)
 
-   return AudioCensorship + '\\' + "output" + "\\" + tada.wav
+   copyfile(input_wav, AudioCensorship + '\\input\\' + input_wav_file)
+
+   fake_output_wav = AudioCensorship + '\\output\\tada.wav'
+
+   return fake_output_wav
 
 if __name__ == '__main__':
 
@@ -5942,6 +5947,9 @@ if __name__ == '__main__':
     times_to_delete = [tuple([int(i) for i in times_to_delete[0]])]
 
     censorship.censor(audio_file, times_to_delete)
+
+    #Testing the fake_censorship Function
+    fake_file = fake_censorship(AudioCensorship + '\\output\\tada.wav')
 
     app = gui_interface()
 
