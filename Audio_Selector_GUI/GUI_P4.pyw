@@ -5897,7 +5897,51 @@ VumVZumWdumXhumYlumZpumatumbxumc1umd5ume9umfBuqgFuqhJuqiNuqjRuqkVuqlZuqmduqn
 huqoluqppuqqtuqrxuqs1uqtluqAAQAAOw==
 """
 
+# Setup Relative Paths to local files
+#----------------------------------------------------------------
+Audio_Selector_GUI = os.path.dirname(sys._getframe().f_code.co_filename)
+
+AudioCensorship = os.path.dirname(Audio_Selector_GUI)
+
+google_sentament_analyze = AudioCensorship + '\\' + 'google_sentament_analyze'
+
+#Add AudioCensorship Directory
+sys.path.insert(0, AudioCensorship)
+
+#Add google_sentament_analyze Directory
+sys.path.insert(0, google_sentament_analyze)
+
+#------------------------------------------------------------------------
+
+from shutil import copyfile
+
+def fake_censorship(input_wav):
+
+   copyfile(input_wav, AudioCensorship + '\\' + "input")
+
+   return AudioCensorship + '\\' + "output" + "\\" + tada.wav
+
 if __name__ == '__main__':
+
+    import sentament_doc
+    import SpeechToText
+    import censorship
+
+    audio_file = "SpeechToText8.wav"
+
+    my_sentament_doc = sentament_doc.sentament_doc()
+
+    full_string, transcript, word_dict = SpeechToText.transcribe_file(audio_file)
+
+    my_sentament_doc.populate_doc(audio_file=audio_file, input_doc_string=full_string, 
+
+    sentences=transcript, words=word_dict)
+
+    times_to_delete = my_sentament_doc.analyze_sentament()
+
+    times_to_delete = [tuple([int(i) for i in times_to_delete[0]])]
+
+    censorship.censor(audio_file, times_to_delete)
 
     app = gui_interface()
 
