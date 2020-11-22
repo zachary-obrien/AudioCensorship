@@ -56,7 +56,8 @@ def censor(fpath: str, snippets: List[Tuple[int, int]]) -> str:
             break
 
     newwav = newwav.append(wav[cur_end:len(wav)], crossfade=0)
-
-    newpath = f"./censored_{''.join(fpath)}"
+    file_name_og = fpath.split("\\")[-1]
+    file_name = f"censored_{''.join(file_name_og)}"
+    newpath = fpath.replace(file_name_og, file_name)
     newwav.export(newpath, format="wav")
     return newpath

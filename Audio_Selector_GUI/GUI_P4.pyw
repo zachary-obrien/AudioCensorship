@@ -5,6 +5,9 @@ import tkinter as Tkinter
 import tkinter.filedialog
 import __main__
 import multiprocessing
+import sentiment_doc
+import SpeechToText
+import censorship
 
 try:
    from playsound import playsound
@@ -85,6 +88,7 @@ def G1_Button_Pess(e=''):
    F = (("Audio files","*.MP3 *.WAV"),("all files","*.*"))
    m.aFile = Select_File(initialdir = Dir, title = T, filetypes = F)
 
+   m.aFile = fake_censorship(m.aFile)
    m.canvas.tag_raise('P1_AUDIO')
    m.canvas.itemconfig('P1_AUDIO', fill='#00ff00')
    m.canvas.update()
@@ -5919,37 +5923,23 @@ def fake_censorship(input_wav):
 
    # input_wav must be the full file path.
    input_wav_file = os.path.basename(input_wav)
+   file_loc = AudioCensorship + '\\input\\' + input_wav_file
 
-   copyfile(input_wav, AudioCensorship + '\\input\\' + input_wav_file)
+   copyfile(input_wav, file_loc)
 
-   fake_output_wav = AudioCensorship + '\\output\\tada.wav'
+   
+   my_sentiment_doc = sentiment_doc.sentiment_doc()
+   full_string, transcript, word_dict = SpeechToText.transcribe_file(file_loc)
+   my_sentiment_doc.populate_doc(audio_file=file_loc, input_doc_string=full_string, sentences=transcript, words=word_dict)
+   times_to_delete = my_sentiment_doc.analyze_sentiment()
+   my_sentiment_doc.remove_audio(times_to_delete)
+   out_loc = censorship.censor(file_loc, times_to_delete)
 
-   return fake_output_wav
+   #fake_output_wav = AudioCensorship + '\\output\\tada.wav'
+
+   return out_loc
 
 if __name__ == '__main__':
-
-    import sentament_doc
-    import SpeechToText
-    import censorship
-
-    audio_file = "SpeechToText8.wav"
-
-    my_sentament_doc = sentament_doc.sentament_doc()
-
-    full_string, transcript, word_dict = SpeechToText.transcribe_file(audio_file)
-
-    my_sentament_doc.populate_doc(audio_file=audio_file, input_doc_string=full_string, 
-
-    sentences=transcript, words=word_dict)
-
-    times_to_delete = my_sentament_doc.analyze_sentament()
-
-    times_to_delete = [tuple([int(i) for i in times_to_delete[0]])]
-
-    censorship.censor(audio_file, times_to_delete)
-
-    #Testing the fake_censorship Function
-    fake_file = fake_censorship(AudioCensorship + '\\output\\tada.wav')
 
     app = gui_interface()
 
